@@ -1,7 +1,10 @@
 # StanfordCoreNLP-Chinese
+
 Chinese implementation of the Python official interface for Stanford CoreNLP Java server application to parse, tokenize, part-of-speech tag Chinese texts.
 
 The Stanford NLP group have released a unified Chinese language tool called CoreNLP which acts as a parser, tokenizer, part-of-speech tagger and more. These software releases are all done in Java, and while there are python wrappers available, it is often hard to find information on how to set the software to work properly. I use nltk and langdetect and define simple functions to import easily instead of focusing on setting up the program every time.
+
+This tutorial is written for Debian-based Linux systems and MacOSX. (Will update for Windows too next).
 
 First: Java is necessary to run all these programs.
 
@@ -22,38 +25,66 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 Previous standalone Stanford NLP software is being deprecated and suggest using the new and integrated CoreNLP server tool
 
-Download CoreNLP 3.9.1 
+Download CoreNLP 3.9.1 and Unzip it somewhere:
 
-http://nlp.stanford.edu/software/stanford-corenlp-full-2018-02-27.zip
+```
+cd /usr/local/
+mkdir StanfordCoreNLP
+cd StanfordCoreNLP
 
-Unzip it somewhere:
+wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-10-05.zip
+unzip stanford-corenlp-full-2018-10-05.zip
+cd stanford-corenlp-full-2018-10-05
+```
 
-`~/StanfordCoreNLP/stanford-corenlp-full-2018-02-27`
+The root folder is then:
+
+`/usr/local/StanfordCoreNLP/stanford-corenlp-full-2018-10-05`
 
 Also download Chinese models
-http://nlp.stanford.edu/software/stanford-chinese-corenlp-2018-02-27-models.jar
+`wget http://nlp.stanford.edu/software/stanford-chinese-corenlp-2018-10-05-models.jar`
 
-AND PUT IT IN THE ROOT FOLDER 
-
-`~/StanfordCoreNLP/stanford-corenlp-full-2018-02-27/stanford-chinese-corenlp-2018-02-27-models.jar`
+You can confirm the links and versions in the follwing link:
 
 https://stanfordnlp.github.io/CoreNLP/download.html 
 
 Following the getting started:
 
-Add all the .jar files to the CLASSPATH
+Add all the .jar files to the CLASSPATH and the root folder to CORENLP_HOME
+
+### Debian-based Linux
+
+add the following to `/etc/environment`
 
 ```
-for file in `find . -name "*.jar"`; do export
+CORENLP_HOME="/usr/local/StanfordCoreNLP/stanford-corenlp-full-2018-10-05"
+for file in `find $CORENLP_HOME -name "*.jar"`; do export
 CLASSPATH="$CLASSPATH:`realpath $file`"; done
 ```
 
-********
+### MacOSX
 In MacOSX we don’t have the ‘realpath’ module so install as a part of GNU coreutils with homebrew
 
 `brew install coreutils`
 
-********
+Now we can do as in the Debian-based Linux step:
+
+add the following to `/etc/environment`
+
+```
+CORENLP_HOME="/usr/local/StanfordCoreNLP/stanford-corenlp-full-2018-10-05"
+for file in `find $CORENLP_HOME -name "*.jar"`; do export
+CLASSPATH="$CLASSPATH:`realpath $file`"; done
+```
+### Windows
+
+I don't have a windows console available so this is untested, but it should be as follows:
+
+```
+cd /D %HOMEDRIVE%%HOMEPATH%
+cd StanfordCoreNLP\stanford-corenlp-full-2018-02-27
+FOR %i IN (*.jar) DO set classpath= %classpath%;%cd%\%i
+```
 
 ## Running Stanford CoreNLP Server
 
@@ -61,8 +92,18 @@ Run the server at the root directory, but pointing to the jar files through the 
 
 Run a server using Chinese properties
 
+### Debian-based Linux and MacOSX
+
 ```
 cd ~/StanfordCoreNLP/stanford-corenlp-full-2018-02-27
+java -Xmx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-chinese.properties -port 9000 -timeout 15000
+```
+
+### Windows
+
+```
+cd /D %HOMEDRIVE%%HOMEPATH%
+cd StanfordCoreNLP\stanford-corenlp-full-2018-02-27
 java -Xmx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-chinese.properties -port 9000 -timeout 15000
 ```
 
@@ -75,7 +116,9 @@ Now for Python we use the official release of the python interface for CoreNLP a
 https://github.com/stanfordnlp/python-stanford-corenlp
 
 
-`pip install stanford-corenlp`
+```
+pip install stanford-corenlp
+```
 
 The steps below are already implemented in my StanfordCoreNLP.py, but here I explain what is behind each step.
 
@@ -85,8 +128,8 @@ The python wrapper reads all the .jar files from an environment variable called 
 I set it up directly in python while running:
 
 ```
-corenlp_home = os.path.join(os.path.expanduser('~'),'StanfordCoreNLP','stanford-corenlp-full-2018-02-27')
-os.environ['CORENLP_HOME'] = corenlp_home
+import os
+corenlp_home = os.environ['CORENLP_HOME']
 ```
 
 ### Properties from StanfordCoreNLP-chinese.properties
