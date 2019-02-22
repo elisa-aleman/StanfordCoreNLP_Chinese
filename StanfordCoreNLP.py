@@ -6,8 +6,12 @@ import langdetect
 import corenlp
 
 # Setting the CoreNLP root folder as environment variable
-corenlp_home = os.path.join(os.path.expanduser('~'),'StanfordCoreNLP','stanford-corenlp-full-2018-02-27')
-os.environ['CORENLP_HOME'] = corenlp_home
+# use the root folder at /etc/environment/
+# CORENLP_HOME="/usr/local/StanfordCoreNLP/stanford-corenlp-full-2018-10-05"
+# for file in `find $CORENLP_HOME/ -name "*.jar"`;
+# do export CLASSPATH="$CLASSPATH:`realpath $file`"; done
+
+corenlp_home = os.environ['CORENLP_HOME']
 # properties from StanfordCoreNLP-chinese.properties
 # When interacting with the server, lists of strings are handled in parentheses, split by spaces and not commas.
 StanfordCoreNLP_chinese_properties = {'annotators':('tokenize' 'ssplit' 'pos' 'lemma' 'ner' 'parse' 'mention' 'coref'),'tokenize.language':'zh','segment.model':'edu/stanford/nlp/models/segmenter/chinese/ctb.gz','segment.sighanCorporaDict':'edu/stanford/nlp/models/segmenter/chinese','segment.serDictionary':'edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz','segment.sighanPostProcessing':True,'ssplit.boundaryTokenRegex':'[.。]|[!?！？]+','pos.model':'edu/stanford/nlp/models/pos-tagger/chinese-distsim/chinese-distsim.tagger','ner.language':'chinese','ner.model':'edu/stanford/nlp/models/ner/chinese.misc.distsim.crf.ser.gz','ner.applyNumericClassifiers':True,'ner.useSUTime':False,'regexner.mapping':'edu/stanford/nlp/models/kbp/cn_regexner_mapping.tab','regexner.validpospattern':'^(NR|NN|JJ).*','regexner.ignorecase':True,'regexner.noDefaultOverwriteLabels':'CITY','parse.model':'edu/stanford/nlp/models/srparser/chineseSR.ser.gz','depparse.model':'edu/stanford/nlp/models/parser/nndep/UD_Chinese.gz','depparse.language':'chinese','coref.sieves':('ChineseHeadMatch' 'ExactStringMatch' 'PreciseConstructs' 'StrictHeadMatch1' 'StrictHeadMatch2' 'StrictHeadMatch3' 'StrictHeadMatch4' 'PronounMatch'),'coref.input.type':'raw','coref.postprocessing':True,'coref.calculateFeatureImportance':False,'coref.useConstituencyTree':True,'coref.useSemantics':False,'coref.algorithm':'hybrid','coref.path.word2vec':'','coref.language':'zh','coref.defaultPronounAgreement':True,'coref.zh.dict':'edu/stanford/nlp/models/dcoref/zh-attributes.txt.gz','coref.print.md.log':False,'coref.md.type':'RULE','coref.md.liberalChineseMD':False,'kbp.semgrex':'edu/stanford/nlp/models/kbp/chinese/semgrex','kbp.tokensregex':'edu/stanford/nlp/models/kbp/chinese/tokensregex','kbp.model':None,'entitylink.wikidict':'edu/stanford/nlp/models/kbp/wikidict_chinese.tsv.gz'}
