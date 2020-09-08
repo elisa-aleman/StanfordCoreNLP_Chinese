@@ -43,8 +43,10 @@ The root folder is then, for example:
 `/usr/local/StanfordCoreNLP/stanford-corenlp-4.1.0`
 
 Also download Chinese and English models to the root folder above:
-`wget http://nlp.stanford.edu/software/stanford-corenlp-4.1.0-models-chinese.jar`
-`wget http://nlp.stanford.edu/software/stanford-corenlp-4.1.0-models-english.jar`
+```
+wget http://nlp.stanford.edu/software/stanford-corenlp-4.1.0-models-chinese.jar
+wget http://nlp.stanford.edu/software/stanford-corenlp-4.1.0-models-english.jar
+```
 
 You can confirm the links and versions in the follwing link:
 
