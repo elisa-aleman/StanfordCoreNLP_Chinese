@@ -2,7 +2,7 @@
 
 Implementation of the Python official interface for Stanford CoreNLP Java server application to parse, tokenize, part-of-speech tag Chinese and English texts.
 
-The Stanford NLP group have released a unified language tool called CoreNLP which acts as a parser, tokenizer, part-of-speech tagger and more. They have different models for a few languages, but I use Chinese and English. These software releases are all done in Java, and while there are python wrappers available, it is often hard to find information on how to set the software to work properly. I use nltk and langdetect and define simple functions to import easily instead of focusing on setting up the program every time.
+The Stanford NLP group has released a unified language tool called CoreNLP which acts as a parser, tokenizer, part-of-speech tagger and more. They have different models for a few languages, but I use Chinese and English. These software releases are all done in Java, and while there are python wrappers available, it is often hard to find information on how to set the software to work properly. I use nltk and langdetect and define simple functions to import easily instead of focusing on setting up the program every time.
 
 This tutorial is written for Debian-based Linux systems and MacOSX. (Will update for Windows too next).
 
@@ -44,6 +44,7 @@ The root folder is then, for example:
 
 Also download Chinese and English models to the root folder above:
 ```
+cd /usr/local/StanfordCoreNLP/stanford-corenlp-4.1.0
 wget http://nlp.stanford.edu/software/stanford-corenlp-4.1.0-models-chinese.jar
 wget http://nlp.stanford.edu/software/stanford-corenlp-4.1.0-models-english.jar
 ```
