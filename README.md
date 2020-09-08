@@ -120,7 +120,6 @@ https://stanfordnlp.github.io/CoreNLP/other-languages.html#python
 
 The official Stanford NLP Python package is Stanza: https://stanfordnlp.github.io/stanza/
 
-
 ```
 pip install stanza
 ```
@@ -141,33 +140,33 @@ with CoreNLPClient(
 
 The CoreNLP server will be automatically started in the background upon the instantiation of the client, so normally you don’t need to worry about it.
 
-How to parse chinese:
+How to parse Chinese:
 
+```
+# My own method to export properties of the Chinese model:
+StanfordCoreNLP_chinese_properties = get_StanfordCoreNLP_chinese_properties()
+
+with CoreNLPClient(
+        annotators=['tokenize','ssplit','pos','lemma','ner', 'parse', 'depparse','coref'],
+        properties=StanfordCoreNLP_chinese_properties,
+        timeout=30000,
+        memory='16G') as client:
+    ann = client.annotate(text)
+```
 
 The steps below are already implemented in my StanfordCoreNLP.py, but here I explain what is behind each step.
 
-### Root directory setup
-
-The python wrapper reads all the .jar files from an environment variable called CORENLP_HOME.
-I set it up directly in python while running:
-
-```
-import os
-corenlp_home = os.environ['CORENLP_HOME']
-from stanza.server import CoreNLPClient
-```
-
 ### Properties from StanfordCoreNLP-chinese.properties
 
-I had to get the java properties file and convert it to a python dictionary that the wrapper program can read.
-The properties file is inside the chinese models .jar `$CORENLP_HOME/stanford-chinese-corenlp-2018-10-05-models.jar`
-So I had to unzip it and find it.
+I had to get the Java properties file and convert it to a python dictionary that the wrapper program can read.
+The properties file is inside the chinese models .jar `$CORENLP_HOME/stanford-corenlp-4.1.0-models-chinese.jar`
+So I had to unzip it and find it in `StanfordCoreNLP-chinese.properties`.
 After editing the file it looks like this:
 
 ```
 # properties set to chinese
 # properties from StanfordCoreNLP-chinese.properties
-properties = {'annotators':('tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse', 'coref'),
+StanfordCoreNLP_chinese_properties = {'annotators':('tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse', 'coref'),
     'tokenize.language':'zh',
     'segment.model':'edu/stanford/nlp/models/segmenter/chinese/ctb.gz',
     'segment.sighanCorporaDict':'edu/stanford/nlp/models/segmenter/chinese',
@@ -207,6 +206,10 @@ properties = {'annotators':('tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse'
 
 I added this dictionary to the `StanfordCoreNLP.py` file, so it should not be necessary for you.
 
+```
+StanfordCoreNLP_chinese_properties = get_StanfordCoreNLP_chinese_properties()
+```
+
 ### Library import 
 
 After this, place StanfordCoreNLP.py in your current directory, and import normally. For example:
@@ -232,4 +235,18 @@ text = "国务院日前发出紧急通知，要求各地切实落实保证市场
 ann = Chinese_CoreNLPClient(text=None, annotators=None)
 sent_list = [token.word for token in ann.sentence[0].token]
 # ['国务院', '日前', '发出', '紧急', '通知', '，', '要求', '各地', '切实', '落实', '保证', '市场', '供应', '的', '各', '项', '政策', '，', '维护', '副食品', '价格', '稳定', '。']
+```
+
+Or in case you want to set up the Client by yourself:
+
+```
+from StanfordCoreNLP import get_StanfordCoreNLP_chinese_properties
+StanfordCoreNLP_chinese_properties = get_StanfordCoreNLP_chinese_properties()
+
+with CoreNLPClient(
+        annotators=['tokenize','ssplit','pos','lemma','ner', 'parse', 'depparse','coref'],
+        properties=StanfordCoreNLP_chinese_properties,
+        timeout=30000,
+        memory='16G') as client:
+    ann = client.annotate(text)
 ```
