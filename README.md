@@ -235,7 +235,7 @@ Now we can freely call the methods in this library and parse Chinese and English
 
 ```
 text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
-ann = Chinese_CoreNLPClient(text=None, annotators=None)
+ann = Chinese_CoreNLPClient(text)
 sent_list = [token.word for token in ann.sentence[0].token]
 # ['国务院', '日前', '发出', '紧急', '通知', '，', '要求', '各地', '切实', '落实', '保证', '市场', '供应', '的', '各', '项', '政策', '，', '维护', '副食品', '价格', '稳定', '。']
 ```
