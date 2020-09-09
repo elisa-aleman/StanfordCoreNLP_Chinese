@@ -1,10 +1,10 @@
 # StanfordCoreNLP Chinese and English
 
-Implementation of the Python official interface for Stanford CoreNLP Java server application to parse, tokenize, part-of-speech tag Chinese and English texts.
+A simplified implementation of the Python official interface Stanza for Stanford CoreNLP Java server application to parse, tokenize, part-of-speech tag Chinese and English texts.
 
-The Stanford NLP group has released a unified language tool called CoreNLP which acts as a parser, tokenizer, part-of-speech tagger and more. They have different models for a few languages, but I use Chinese and English. These software releases are all done in Java, and while there are python wrappers available, it is often hard to find information on how to set the software to work properly. I use nltk and langdetect and define simple functions to import easily instead of focusing on setting up the program every time.
+The Stanford NLP group has released a unified language tool called CoreNLP which acts as a parser, tokenizer, part-of-speech tagger and more. They have different models for a few languages, but I use Chinese and English. These software releases are all done in Java, and while there is an official python client available, called Stanza, it is often hard to find information on how to set the software to work properly. I use langdetect and define simple functions to import easily instead of focusing on setting up the program every time. I also made a few methods to get the output I really want from the annotation results, which are very complicated and full of information that is offuscating the main objective of using the application.
 
-This tutorial is written for Debian-based Linux systems and MacOSX. (Will update for Windows too next).
+This tutorial is written for Debian-based Linux systems and MacOSX. I researched Windows installing instructions and wrote them, but can't test them myself.
 
 First: Java is necessary to run all these programs.
 
