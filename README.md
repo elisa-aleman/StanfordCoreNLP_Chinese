@@ -254,11 +254,13 @@ with CoreNLPClient(
     ann = client.annotate(text)
 ```
 
-I also wrote some useful methods: `Segment()`, `POS_Tag()` and `Dependency_Parse()`
+### Library usage
+
+This library is not only for simplifying the setup of the Chinese properties for the client, but I also wrote some useful methods: `Segment()`, `POS_Tag()` and `Dependency_Parse()`
 
 Here's some examples using them:
 
-Usage of `Segment()`
+#### Usage of `Segment()`
 ```
 en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
 Segment(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
@@ -272,7 +274,7 @@ Segment(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, 
 >>>'国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。'
 ```
 
-Usage of `POS_Tag()`:
+#### Usage of `POS_Tag()`:
 ```
 en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
 POS_Tag(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
@@ -287,7 +289,7 @@ POS_Tag(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, 
 
 ```
 
-Usage of `Dependency_Parse()`:
+#### Usage of `Dependency_Parse()`:
 ```
 en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
 Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
