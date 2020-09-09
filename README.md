@@ -253,3 +253,108 @@ with CoreNLPClient(
         memory='16G') as client:
     ann = client.annotate(text)
 ```
+
+I also wrote some useful methods: `Segment()`, `POS_Tag()` and `Dependency_Parse()`
+
+Here's some examples using them:
+
+Usage of `Segment()`
+```
+en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
+Segment(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+>>>[['This', 'is', 'a', 'test', 'sentence', 'for', 'the', 'server', 'to', 'handle', '.'], ['I', 'wonder', 'what', 'it', 'will', 'do', '.']]
+
+zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
+Segment(zh_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+>>>[['国务院', '日前', '发出', '紧急', '通知', '，', '要求', '各', '地', '切实', '落实', '保证', '市场', '供应', '的', '各', '项', '政策', '，', '维护', '副食品', '价格', '稳定', '。']]
+
+Segment(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
+>>>'国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。'
+```
+
+Usage of `POS_Tag()`:
+```
+en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
+POS_Tag(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+>>>[[('This', 'DT'), ('is', 'VBZ'), ('a', 'DT'), ('test', 'NN'), ('sentence', 'NN'), ('for', 'IN'), ('the', 'DT'), ('server', 'NN'), ('to', 'TO'), ('handle', 'VB'), ('.', '.')], [('I', 'PRP'), ('wonder', 'VBP'), ('what', 'WP'), ('it', 'PRP'), ('will', 'MD'), ('do', 'VB'), ('.', '.')]]
+
+zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
+POS_Tag(zh_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+>>>[[('国务院', 'NN'), ('日前', 'NT'), ('发出', 'VV'), ('紧急', 'JJ'), ('通知', 'NN'), ('，', 'PU'), ('要求', 'VV'), ('各', 'DT'), ('地', 'NN'), ('切实', 'AD'), ('落实', 'VV'), ('保证', 'VV'), ('市场', 'NN'), ('供应', 'NN'), ('的', 'DEG'), ('各', 'DT'), ('项', 'M'), ('政策', 'NN'), ('，', 'PU'), ('维护', 'VV'), ('副食品', 'NN'), ('价格', 'NN'), ('稳定', 'NN'), ('。', 'PU')]]
+
+POS_Tag(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
+>>>'国务院#NN 日前#NT 发出#VV 紧急#JJ 通知#NN ，#PU 要求#VV 各#DT 地#NN 切实#AD 落实#VV 保证#VV 市场#NN 供应#NN 的#DEG 各#DT 项#M 政策#NN ，#PU 维护#VV 副食品#NN 价格#NN 稳定#NN 。#PU'
+
+```
+
+Usage of `Dependency_Parse()`:
+```
+en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
+Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+>>> [   (['This','is','a','test','sentence','for','the','server','to','handle','.'],
+        [('nsubj', 'sentence', 'This'),
+        ('cop', 'sentence', 'is'),
+        ('det', 'sentence', 'a'),
+        ('compound', 'sentence', 'test'),
+        ('acl', 'sentence', 'handle'),
+        ('punct', 'sentence', '.'),
+        ('det', 'server', 'the'),
+        ('mark', 'handle', 'for'),
+        ('nsubj', 'handle', 'server'),
+        ('mark', 'handle', 'to')]
+    ),
+
+    (['I', 'wonder', 'what', 'it', 'will', 'do', '.'],
+        [('obj', 'do', 'what'),
+        ('nsubj', 'do', 'it'),
+        ('aux', 'do', 'will'),
+        ('ccomp', 'wonder', 'do'),
+        ('punct', 'wonder', '.'),
+        ('nsubj', 'wonder', 'I')]
+    )
+]
+
+print(Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=False, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+>>>
+This is a test sentence for the server to handle .
+nsubj(sentence,This), cop(sentence,is), det(sentence,a), compound(sentence,test), acl(sentence,handle), punct(sentence,.), det(server,the), mark(handle,for), nsubj(handle,server), mark(handle,to)
+
+I wonder what it will do .
+obj(do,what), nsubj(do,it), aux(do,will), ccomp(wonder,do), punct(wonder,.), nsubj(wonder,I)
+
+zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
+Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+>>>[(  ['国务院','日前','发出','紧急','通知','，','要求','各','地','切实','落实','保证','市场','供应','的','各','项','政策','，','维护','副食品','价格','稳定','。'],
+      [('nsubj', '发出', '国务院'),
+       ('nmod:tmod', '发出', '日前'),
+       ('dobj', '发出', '通知'),
+       ('punct', '发出', '，'),
+       ('conj', '发出', '要求'),
+       ('punct', '发出', '。'),
+       ('amod', '通知', '紧急'),
+       ('dobj', '要求', '地'),
+       ('ccomp', '要求', '落实'),
+       ('det', '地', '各'),
+       ('advmod', '落实', '切实'),
+       ('ccomp', '落实', '保证'),
+       ('dobj', '保证', '政策'),
+       ('punct', '保证', '，'),
+       ('conj', '保证', '维护'),
+       ('compound:nn', '供应', '市场'),
+       ('case', '供应', '的'),
+       ('mark:clf', '各', '项'),
+       ('det', '政策', '各'),
+       ('nmod:assmod', '政策', '供应'),
+       ('dobj', '维护', '稳定'),
+       ('compound:nn', '稳定', '副食品'),
+       ('compound:nn', '稳定', '价格')]
+)]
+
+print(Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=False, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+>>> 
+国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。
+nsubj(发出,国务院), nmod:tmod(发出,日前), dobj(发出,通知), punct(发出,，), conj(发出,要求), punct(发出,。), amod(通知,紧急), dobj(要求,地), ccomp(要求,落实), det(地,各), advmod(落实,切实), ccomp(落实,保证), dobj(保证,政策), punct(保证,，), conj(保证,维护), compound:nn(供应,市场), case(供应,的), mark:clf(各,项), det(政策,各), nmod:assmod(政策,供应), dobj(维护,稳定), compound:nn(稳定,副食品), compound:nn(稳定,价格)
+
+```
+
+I hope you can use these for your projects! Thanks for reading.
