@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 #!python3
 
-import os
 import langdetect
 from stanza.server import CoreNLPClient
 
