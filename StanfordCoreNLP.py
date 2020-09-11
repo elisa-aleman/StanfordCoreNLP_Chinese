@@ -141,7 +141,12 @@ def flatten(container):
 ##### Segmentation #######
 ##########################
 
-def Segment(text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False):
+def Segment(text, 
+            sent_split=True, 
+            tolist=True, 
+            properties=None, 
+            timeout=15000, 
+            chinese_only=False):
     '''
     Processes a Chinese or English string and returns list of words nested in lists of sentences, or text split by spaces and newlines depending on parameters.
     
@@ -214,7 +219,13 @@ def Segment(text, sent_split=True, tolist=True, properties=None, timeout=15000, 
 ##### POS Tagging #######
 #########################
 
-def POS_Tag(text, sent_split=True, tolist=True, pre_tokenized=True, properties=None, timeout=15000, chinese_only=False):
+def POS_Tag(text,
+            sent_split=True,
+            tolist=True,
+            pre_tokenized=True,
+            properties=None,
+            timeout=15000,
+            chinese_only=False):
     '''
     Processes a Chinese or English string and returns list of words paired in tuples with their tags, nested in lists of sentences;
     or text split by spaces and newlines depending on parameters, tagged delimited by #.
@@ -398,7 +409,15 @@ Each edge is a connection between the words. Let's look at the edge between 5 an
 ##########################
 
 
-def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False, tolist=True, pre_tokenized=True, properties=None, timeout=15000, chinese_only=False):
+def Dependency_Parse(text,
+                    dependency_type='basicDependencies',
+                    sent_split=False,
+                    tolist=True,
+                    output_with_sentence=True,
+                    pre_tokenized=True,
+                    properties=None,
+                    timeout=15000,
+                    chinese_only=False):
     '''
     Processes a Chinese or English text and collects the dependency, source word and target word in a list of tuples nested in a list of sentences.
     
@@ -412,6 +431,7 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
             'enhancedPlusPlusDependencies'
     :param (bool) sent_split: Set True to split text into sentences. Set False to keep the text as one sentence.
     :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
+    :param (bool) output_with_sentence: set to True (default) to get the segmented sentence as part of the output on top of the dependencies. Set to False to keep dependencies only.
     :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
@@ -472,6 +492,8 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
     xsubj: controlling subject
 
     :return: Tuple of sentence, and dependency list nested in a list of sentences
+            if output_with_sentence==True:
+
                 [   (sentence, 
                     [(dependency, source_word, target_word),(dependency, source_word, target_word)]
                     ),
@@ -480,17 +502,27 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
                     ),
                 ...]
              
-            or Dependency string formatted as follows:
-                sentence
-                dependency(source,target), dependency(source,target), ....
+                or Dependency string formatted as follows:
+                    sentence
+                    dependency(source,target), dependency(source,target), ....
 
-                sentence
-                dependency(source,target), dependency(source,target), ....
+                    sentence
+                    dependency(source,target), dependency(source,target), ....
+
+            if output_with_sentence==False:
+                
+                [   [(dependency, source_word, target_word),(dependency, source_word, target_word)],
+                    [(dependency, source_word, target_word),(dependency, source_word, target_word)],
+                ...]
+             
+                or Dependency string formatted as follows:
+                    dependency(source,target), dependency(source,target), ....
+                    dependency(source,target), dependency(source,target), ....
 
     Example:
 
     en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
-    Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+    Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
     >>> [   (['This','is','a','test','sentence','for','the','server','to','handle','.'],
                 [('nsubj', 'sentence', 'This'),
                 ('cop', 'sentence', 'is'),
@@ -514,7 +546,7 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
             )
         ]
 
-    print(Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=False, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+    print(Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
     >>>
     This is a test sentence for the server to handle .
     nsubj(sentence,This), cop(sentence,is), det(sentence,a), compound(sentence,test), acl(sentence,handle), punct(sentence,.), det(server,the), mark(handle,for), nsubj(handle,server), mark(handle,to)
@@ -523,7 +555,7 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
     obj(do,what), nsubj(do,it), aux(do,will), ccomp(wonder,do), punct(wonder,.), nsubj(wonder,I)
 
     zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
-    Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+    Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
     >>>[(  ['国务院','日前','发出','紧急','通知','，','要求','各','地','切实','落实','保证','市场','供应','的','各','项','政策','，','维护','副食品','价格','稳定','。'],
               [('nsubj', '发出', '国务院'),
                ('nmod:tmod', '发出', '日前'),
@@ -550,7 +582,7 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
                ('compound:nn', '稳定', '价格')]
         )]
 
-    print(Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=False, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+    print(Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
     >>> 
     国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。
     nsubj(发出,国务院), nmod:tmod(发出,日前), dobj(发出,通知), punct(发出,，), conj(发出,要求), punct(发出,。), amod(通知,紧急), dobj(要求,地), ccomp(要求,落实), det(地,各), advmod(落实,切实), ccomp(落实,保证), dobj(保证,政策), punct(保证,，), conj(保证,维护), compound:nn(供应,市场), case(供应,的), mark:clf(各,项), det(政策,各), nmod:assmod(政策,供应), dobj(维护,稳定), compound:nn(稳定,副食品), compound:nn(稳定,价格)
@@ -591,7 +623,10 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
             for sent in ann.sentence:
                 words = dict([(i+1,token.word) for i,token in enumerate(sent.token)])
                 sentence_words = [token.word for token in sent.token]
-                deps_sent_str = ' '.join(sentence_words) + '\n'
+                if output_with_sentence:
+                    deps_sent_str = ' '.join(sentence_words) + '\n'
+                else:
+                    deps_sent_str = ''
                 if dependency_type == None: depTree = sent.basicDependencies
                 elif dependency_type == 'alternativeDependencies': depTree = sent.alternativeDependencies
                 elif dependency_type == 'basicDependencies': depTree = sent.basicDependencies
@@ -600,12 +635,22 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
                 elif dependency_type == 'enhancedDependencies': depTree = sent.enhancedDependencies
                 elif dependency_type == 'enhancedPlusPlusDependencies': depTree = sent.enhancedPlusPlusDependencies
                 else: depTree = sent.basicDependencies
-                deps_sent = (sentence_words, [(edge.dep, words[edge.source], words[edge.target]) for edge in depTree.edge])
+                if output_with_sentence:
+                    deps_sent = (sentence_words, [(edge.dep, words[edge.source], words[edge.target]) for edge in depTree.edge])
+                else:
+                    deps_sent = [(edge.dep, words[edge.source], words[edge.target]) for edge in depTree.edge]
                 deps.append(deps_sent)
                 if not tolist:
-                    deps_sent_str += ', '.join(['{}({},{})'.format(dep_tup[0],dep_tup[1],dep_tup[2]) for dep_tup in deps_sent[1]])
+                    if output_with_sentence:
+                        deps_sent_str += ', '.join(['{}({},{})'.format(dep_tup[0],dep_tup[1],dep_tup[2]) for dep_tup in deps_sent[1]])
+                    else:
+                        deps_sent_str += ', '.join(['{}({},{})'.format(dep_tup[0],dep_tup[1],dep_tup[2]) for dep_tup in deps_sent])
                     deps_strs.append(deps_sent_str)
-            if not tolist: deps_str = '\n\n'.join(deps_strs)
+            if not tolist: 
+                if output_with_sentence:
+                    deps_str = '\n\n'.join(deps_strs)
+                else:
+                    deps_str = '\n'.join(deps_strs)
         else:
             deps = None
     else:
@@ -616,36 +661,53 @@ def Dependency_Parse(text, dependency_type='basicDependencies', sent_split=False
         return deps_str
 
 
-def Dependency_Parse_str_tolist(dep_parse_str):
+def Dependency_Parse_str_tolist(dep_parse_str, output_with_sentence=True):
     '''
     In case of storing Dependency_Parse() output in string form,
     this method returns it to nested list form.
 
-    :param (str) dep_parse_str: Dependency_Parse() output, sentences delimited by double newline, in format: 
-       "sentence
-        dependency(source,target), dependency(source,target),...
+    :param (str) dep_parse_str: Dependency_Parse() output, sentences delimited by newline or double newline
+        if output_with_sentence==True, in format:
+           "sentence
+            dependency(source,target), dependency(source,target),...
 
-        sentence
-        dependency(source,target), dependency(source,target),..."
+            sentence
+            dependency(source,target), dependency(source,target),..."
+        if output_with_sentence==False, in format:
+           "dependency(source,target), dependency(source,target),...
+            dependency(source,target), dependency(source,target),..."  
+    :param (bool) output_with_sentence: set to True (default) to have the segmented sentence as part of the input on top of the dependencies. Set to False to input dependencies only.
 
-    :return: Dependency_Parse() output in format:
-        [   (sentence, 
-                    [(dependency, source_word, target_word),(dependency, source_word, target_word)]
-                    ),
-                    (sentence, 
-                    [(dependency, source_word, target_word),(dependency, source_word, target_word)]
-                    ),
-        ...]
+    :return: Dependency_Parse() tolist output:
+        if output_with_sentence==True, in format:
+            [   (sentence, 
+                        [(dependency, source_word, target_word),(dependency, source_word, target_word)]
+                        ),
+                        (sentence, 
+                        [(dependency, source_word, target_word),(dependency, source_word, target_word)]
+                        ),
+            ...]
+        if output_with_sentence==False, in format:
+            [   [(dependency, source_word, target_word),(dependency, source_word, target_word)],
+                [(dependency, source_word, target_word),(dependency, source_word, target_word)],
+            ...]
     '''
-    parse_sentences = dep_parse_str.split('\n\n')
     deps = []
-    for sent in parse_sentences:
-        parse_tup_per_sent = tuple(sent.split('\n'))
-        sentence_words = parse_tup_per_sent[0].split(' ')
-        tup_list = parse_tup_per_sent[1].split(', ')
-        tup_new_list = [tuple(tup.replace('(',' ').replace(',',' ').replace(')','').split(' ')) for tup in tup_list]
-        ins = (sentence_words, tup_new_list)
-        deps.append(ins)
+    if output_with_sentence:
+        parse_sentences = dep_parse_str.split('\n\n')
+        for sent in parse_sentences:
+            parse_tup_per_sent = tuple(sent.split('\n'))
+            sentence_words = parse_tup_per_sent[0].split(' ')
+            tup_list = parse_tup_per_sent[1].split(', ')
+            tup_new_list = [tuple(tup.replace('(',' ').replace(',',' ').replace(')','').split(' ')) for tup in tup_list]
+            ins = (sentence_words, tup_new_list)
+            deps.append(ins)
+    else:
+        parse_sentences = dep_parse_str.split('\n')
+        for sent in parse_sentences:
+            tup_list = sent.split(', ')
+            tup_new_list = [tuple(tup.replace('(',' ').replace(',',' ').replace(')','').split(' ')) for tup in tup_list]
+            deps.append(tup_new_list)
     return deps
 
 if __name__ == '__main__':
