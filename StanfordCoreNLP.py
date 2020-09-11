@@ -107,7 +107,7 @@ def get_StanfordCoreNLP_chinese_properties(properties=None):
 
 
 #### For convenience:
-def Chinese_CoreNLPClient(text, annotators=None, properties=None, timeout=15000):
+def Chinese_CoreNLPClient(text, annotators=None, properties=None, timeout=15000, be_quiet=False):
     properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
     with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
         ann = client.annotate(text)
@@ -115,7 +115,7 @@ def Chinese_CoreNLPClient(text, annotators=None, properties=None, timeout=15000)
 
 
 #### For convenience:
-def English_CoreNLPClient(text, annotators=None, properties=None, timeout=15000):
+def English_CoreNLPClient(text, annotators=None, properties=None, timeout=15000, be_quiet=False):
     with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
         ann = client.annotate(text)
     return ann
@@ -145,8 +145,11 @@ def Segment(text,
             sent_split=True, 
             tolist=True, 
             properties=None, 
-            timeout=15000, 
-            chinese_only=False):
+            timeout=15000,
+            be_quiet=False, 
+            chinese_only=False,
+            use_langdetect=True,
+            no_langdetect_chinese=False):
     '''
     Processes a Chinese or English string and returns list of words nested in lists of sentences, or text split by spaces and newlines depending on parameters.
     
@@ -155,8 +158,11 @@ def Segment(text,
     :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
+    :param (bool) be_quiet: CoreNLPClient silent mode
     :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese. 
                                 Ignoring English can save overhead, when faster tools are available.
+    :param (bool) use_langdetect: Use langdetect to select English and Chinese only. Set to false to just assume text is OK to parse
+    :param (bool) no_langdetect_chinese: When not using langdetect, you need to specify if Chinese text is being used with True. 
 
     :return: segmented text in nested list or string
 
@@ -177,10 +183,6 @@ def Segment(text,
     annotators = ['tokenize', 'ssplit']
     words=[]
     if text!='':
-        try:
-            lang = langdetect.detect(text)
-        except langdetect.lang_detect_exception.LangDetectException:
-            lang = "undetermined"
         if not sent_split:
             if not properties:
                 properties={'tokenize_no_ssplit':True}
@@ -189,14 +191,23 @@ def Segment(text,
                 properties.update({'tokenize_no_ssplit':True})
                 # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
         ##########
-        if chinese_only:
-            segment_ok = (lang == "zh-cn")
+        if use_langdetect:
+            try:
+                lang = langdetect.detect(text)
+            except langdetect.lang_detect_exception.LangDetectException:
+                lang = "undetermined"
+            if chinese_only:
+                parse_ok = (lang == "zh-cn")
+            else:
+                parse_ok = (lang == "zh-cn") or (lang == "en")
         else:
-            segment_ok = (lang == "zh-cn") or (lang == "en")
-        if segment_ok:
+            parse_ok = True
+            if no_langdetect_chinese:
+                lang = 'zh-cn'
+        if parse_ok:
             if (lang == "zh-cn"):
                 properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
-            with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
+            with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
                 ann = client.annotate(text)
             words = [[token.word for token in sent.token] for sent in ann.sentence]
             segmented_list = [' '.join(wordlist) for wordlist in words]
@@ -225,7 +236,10 @@ def POS_Tag(text,
             pre_tokenized=True,
             properties=None,
             timeout=15000,
-            chinese_only=False):
+            be_quiet=False,
+            chinese_only=False,
+            use_langdetect=True,
+            no_langdetect_chinese=False):
     '''
     Processes a Chinese or English string and returns list of words paired in tuples with their tags, nested in lists of sentences;
     or text split by spaces and newlines depending on parameters, tagged delimited by #.
@@ -236,8 +250,11 @@ def POS_Tag(text,
     :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
+    :param (bool) be_quiet: CoreNLPClient silent mode
     :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese.
-
+    :param (bool) use_langdetect: Use langdetect to select English and Chinese only. Set to false to just assume text is OK to parse
+    :param (bool) no_langdetect_chinese: When not using langdetect, you need to specify if Chinese text is being used with True. 
+    
     POS Tags explanation
 
     The Chinese tags used by Stanford NLP are the same as Penn Treebank POS Tags
@@ -309,10 +326,6 @@ def POS_Tag(text,
     annotators = ['tokenize', 'ssplit', 'pos']
     words=[]
     if text!='':
-        try:
-            lang = langdetect.detect(text)
-        except langdetect.lang_detect_exception.LangDetectException:
-            lang = "undetermined"
         if not sent_split:
             if not properties:
                 properties={'tokenize_no_ssplit':True}
@@ -328,14 +341,23 @@ def POS_Tag(text,
                 properties.update({'tokenize_pretokenized': True})
                 # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
         ##########
-        if chinese_only:
-            postag_ok = (lang == "zh-cn")
+        if use_langdetect:
+            try:
+                lang = langdetect.detect(text)
+            except langdetect.lang_detect_exception.LangDetectException:
+                lang = "undetermined"
+            if chinese_only:
+                parse_ok = (lang == "zh-cn")
+            else:
+                parse_ok = (lang == "zh-cn") or (lang == "en")
         else:
-            postag_ok = (lang == "zh-cn") or (lang == "en")
-        if postag_ok:
+            parse_ok = True
+            if no_langdetect_chinese:
+                lang = 'zh-cn'
+        if parse_ok:
             if (lang == "zh-cn"):
                 properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
-            with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
+            with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
                 ann = client.annotate(text)
             words = [[(token.word,token.pos) for token in sent.token] for sent in ann.sentence]
             segmented_list = [' '.join(['#'.join(posted) for posted in wordlist]) for wordlist in words]
@@ -417,7 +439,10 @@ def Dependency_Parse(text,
                     pre_tokenized=True,
                     properties=None,
                     timeout=15000,
-                    chinese_only=False):
+                    be_quiet=False,
+                    chinese_only=False,
+                    use_langdetect=True,
+                    no_langdetect_chinese=False):
     '''
     Processes a Chinese or English text and collects the dependency, source word and target word in a list of tuples nested in a list of sentences.
     
@@ -435,7 +460,10 @@ def Dependency_Parse(text,
     :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
+    :param (bool) be_quiet: CoreNLPClient silent mode
     :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese.
+    :param (bool) use_langdetect: Use langdetect to select English and Chinese only. Set to false to just assume text is OK to parse
+    :param (bool) no_langdetect_chinese: When not using langdetect, you need to specify if Chinese text is being used with True. 
 
     Stanford NLP published a manual for understanding the dependencies and what they mean.
     Stanford NLP dependencies manual:
@@ -604,18 +632,23 @@ def Dependency_Parse(text,
             properties.update({'tokenize_pretokenized': True})
             # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
     if text!='':
-        try:
-            lang = langdetect.detect(text)
-        except langdetect.lang_detect_exception.LangDetectException:
-            lang = "undetermined"
-        if chinese_only:
-            parse_ok = (lang == "zh-cn")
+        if use_langdetect:
+            try:
+                lang = langdetect.detect(text)
+            except langdetect.lang_detect_exception.LangDetectException:
+                lang = "undetermined"
+            if chinese_only:
+                parse_ok = (lang == "zh-cn")
+            else:
+                parse_ok = (lang == "zh-cn") or (lang == "en")
         else:
-            parse_ok = (lang == "zh-cn") or (lang == "en")
+            parse_ok = True
+            if no_langdetect_chinese:
+                lang = 'zh-cn'
         if parse_ok:
             if (lang == "zh-cn"):
                 properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
-            with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
+            with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
                 ann = client.annotate(text)
             #######
             deps = []
@@ -653,8 +686,10 @@ def Dependency_Parse(text,
                     deps_str = '\n'.join(deps_strs)
         else:
             deps = None
+            deps_str = ''
     else:
         deps = None
+        deps_str = ''
     if tolist:
         return deps
     else:
