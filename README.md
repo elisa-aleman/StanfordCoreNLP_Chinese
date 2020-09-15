@@ -23,7 +23,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 ## Install Stanford CoreNLP
 
-Previous standalone Stanford NLP software is being deprecated and suggest using the new and integrated CoreNLP server tool.
+Previous standalone Stanford NLP software is being deprecated and they suggest using the new and integrated CoreNLP server tool.
 
 Download CoreNLP 4.1.0 and Unzip it somewhere:
 
