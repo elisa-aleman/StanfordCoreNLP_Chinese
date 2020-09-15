@@ -540,7 +540,7 @@ def POS_Tag_many(text_list,
             # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
     if (lang == "zh-cn"):
         properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
-    annotators = ['tokenize', 'ssplit']
+    annotators = ['tokenize', 'ssplit', 'pos']
     result = []
     with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
         for text in text_list:

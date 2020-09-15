@@ -107,3 +107,6 @@ venv.bak/
 Icon\r
 Icon[
 ]
+
+# StanfordCoreNLP temp props files
+*.props
