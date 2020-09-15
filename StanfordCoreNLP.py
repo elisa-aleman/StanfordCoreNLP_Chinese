@@ -231,7 +231,7 @@ def Segment_many(text_list,
             tolist=True, 
             properties=None, 
             timeout=15000,
-            be_quiet=False, 
+            verbose=1,
             lang='zh-cn'):
     '''
     Processes a list of Chinese or English strings and returns list of words nested in lists of sentences, or a list of text split by spaces and newlines depending on parameters.
@@ -242,7 +242,11 @@ def Segment_many(text_list,
     :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
-    :param (bool) be_quiet: CoreNLPClient silent mode
+    :param (int) verbose: verbose level
+            0: CoreNLPClient silent mode, no progress printing
+            1: CoreNLPClient silent mode, progress printing
+            2: CoreNLPClient silent mode off, no progress printing
+            3: CoreNLPClient silent mode off, progress printing
     :param (str) lang: 'zh-cn' for Chinese and 'en' for English 
 
     :return: list of segmented text in nested list or list of strings
@@ -273,9 +277,30 @@ def Segment_many(text_list,
     if (lang == "zh-cn"):
         properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
     annotators = ['tokenize', 'ssplit']
+    if verbose == 0:
+        be_quiet = True
+        print_progress = False
+    elif verbose == 1:
+        be_quiet = True
+        print_progress = True
+    elif verbose == 2:
+        be_quiet = False
+        print_progress = False
+    elif verbose == 3:
+        be_quiet = False
+        print_progress = True
+    else: 
+        be_quiet = False
+        print_progress = True
     result = []
+    limit = len(text_list)
     with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
-        for text in text_list:
+        for i ,text in enumerate(text_list):
+            if print_progress:
+                if lang=='zh-cn':
+                    print("Segmenting Chinese sentence {} of {}".format(i+1,limit))
+                elif lang=='en':
+                    print("SegmentingEnglish sentence {} of {}".format(i+1,limit))
             if text!='':
                 ann = client.annotate(text)      
                 words = [[token.word for token in sent.token] for sent in ann.sentence]
@@ -449,7 +474,7 @@ def POS_Tag_many(text_list,
             tolist=True, 
             properties=None, 
             timeout=15000,
-            be_quiet=False, 
+            verbose=1,
             lang='zh-cn'):
     '''
     Processes a list of Chinese or English strings and returns lists of words paired in tuples with their tags, nested in lists of sentences, nested in lists of documents in text_list;
@@ -461,7 +486,11 @@ def POS_Tag_many(text_list,
     :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
-    :param (bool) be_quiet: CoreNLPClient silent mode
+    :param (int) verbose: verbose level
+            0: CoreNLPClient silent mode, no progress printing
+            1: CoreNLPClient silent mode, progress printing
+            2: CoreNLPClient silent mode off, no progress printing
+            3: CoreNLPClient silent mode off, progress printing
     :param (str) lang: 'zh-cn' for Chinese and 'en' for English 
 
     POS Tags explanation
@@ -545,9 +574,30 @@ def POS_Tag_many(text_list,
     if (lang == "zh-cn"):
         properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
     annotators = ['tokenize', 'ssplit', 'pos']
+    if verbose == 0:
+        be_quiet = True
+        print_progress = False
+    elif verbose == 1:
+        be_quiet = True
+        print_progress = True
+    elif verbose == 2:
+        be_quiet = False
+        print_progress = False
+    elif verbose == 3:
+        be_quiet = False
+        print_progress = True
+    else: 
+        be_quiet = False
+        print_progress = True
     result = []
+    limit = len(text_list)
     with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
-        for text in text_list:
+        for i ,text in enumerate(text_list):
+            if print_progress:
+                if lang=='zh-cn':
+                    print("POS Tagging Chinese sentence {} of {}".format(i+1,limit))
+                elif lang=='en':
+                    print("POS Tagging English sentence {} of {}".format(i+1,limit))
             if text!='':
                 ann = client.annotate(text)
                 words = [[(token.word,token.pos) for token in sent.token] for sent in ann.sentence]
@@ -893,7 +943,7 @@ def Dependency_Parse_many(text_list,
                     pre_tokenized=True,
                     properties=None,
                     timeout=15000,
-                    be_quiet=False,
+                    verbose=1,
                     lang='zh-cn'):
     '''
     Processes a Chinese or English text and collects the dependency, source word and target word in a list of tuples nested in a list of sentences.
@@ -912,7 +962,11 @@ def Dependency_Parse_many(text_list,
     :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
     :param (int) timeout: CoreNLP server time before raising exception.
-    :param (bool) be_quiet: CoreNLPClient silent mode
+    :param (int) verbose: verbose level
+            0: CoreNLPClient silent mode, no progress printing
+            1: CoreNLPClient silent mode, progress printing
+            2: CoreNLPClient silent mode off, no progress printing
+            3: CoreNLPClient silent mode off, progress printing
     :param (str) lang: 'zh-cn' for Chinese and 'en' for English
 
     Stanford NLP published a manual for understanding the dependencies and what they mean.
@@ -1088,9 +1142,30 @@ def Dependency_Parse_many(text_list,
     if lang == "zh-cn":
         properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
     annotators=['tokenize', 'ssplit', 'lemma', 'pos', 'depparse']
+    if verbose == 0:
+        be_quiet = True
+        print_progress = False
+    elif verbose == 1:
+        be_quiet = True
+        print_progress = True
+    elif verbose == 2:
+        be_quiet = False
+        print_progress = False
+    elif verbose == 3:
+        be_quiet = False
+        print_progress = True
+    else: 
+        be_quiet = False
+        print_progress = True
     result = []
+    limit = len(text_list)
     with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout, be_quiet=be_quiet) as client:
-        for text in text_list:
+        for i ,text in enumerate(text_list):
+            if print_progress:
+                if lang=='zh-cn':
+                    print("Dependency Parsing Chinese sentence {} of {}".format(i+1,limit))
+                elif lang=='en':
+                    print("Dependency Parsing English sentence {} of {}".format(i+1,limit))
             if text!='':
                 ann = client.annotate(text)
                 #######
