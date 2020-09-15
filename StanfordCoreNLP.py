@@ -261,6 +261,8 @@ def Segment_many(text_list,
     >>>[['国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。']]
     
     '''
+    if type(text_list)==type(''):
+        text_list = [text_list]
     if not sent_split:
         if not properties:
             properties={'tokenize_no_ssplit':True}
@@ -531,6 +533,8 @@ def POS_Tag_many(text_list,
     >>>['国务院#NN 日前#NT 发出#VV 紧急#JJ 通知#NN ，#PU 要求#VV 各#DT 地#NN 切实#AD 落实#VV 保证#VV 市场#NN 供应#NN 的#DEG 各#DT 项#M 政策#NN ，#PU 维护#VV 副食品#NN 价格#NN 稳定#NN 。#PU']
     
     '''
+    if type(text_list)==type(''):
+        text_list = [text_list]
     if not sent_split:
         if not properties:
             properties={'tokenize_no_ssplit':True}
@@ -1065,6 +1069,8 @@ def Dependency_Parse_many(text_list,
     ["国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。
     nsubj(发出,国务院), nmod:tmod(发出,日前), dobj(发出,通知), punct(发出,，), conj(发出,要求), punct(发出,。), amod(通知,紧急), dobj(要求,地), ccomp(要求,落实), det(地,各), advmod(落实,切实), ccomp(落实,保证), dobj(保证,政策), punct(保证,，), conj(保证,维护), compound:nn(供应,市场), case(供应,的), mark:clf(各,项), det(政策,各), nmod:assmod(政策,供应), dobj(维护,稳定), compound:nn(稳定,副食品), compound:nn(稳定,价格)"]
     '''
+    if type(text_list)==type(''):
+        text_list = [text_list]
     if not sent_split:
         if not properties:
             properties={'tokenize_no_ssplit':True}
