@@ -164,7 +164,6 @@ def Segment_str_langdetect(text,
         
         Segment_str_langdetect(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
         >>>'国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。'
-    
     '''
     annotators = ['tokenize', 'ssplit']
     words=[]
@@ -195,7 +194,7 @@ def Segment_str_langdetect(text,
             if sent_split:
                 segmented = '\n'.join(segmented_list)
             else:
-                words = flatten(words)
+                words = [word for sent in words for word in sent]
                 segmented = ' '.join(segmented_list)
         else:
             segmented = text
@@ -289,7 +288,7 @@ def Segment(text_list,
                 if sent_split:
                     segmented = '\n'.join(segmented_list)
                 else:
-                    words = flatten(words)
+                    words = [word for sent in words for word in sent]
                     segmented = ' '.join(segmented_list)
             else:
                 segmented = text
@@ -395,13 +394,6 @@ def POS_Tag_str_langdetect(text,
     annotators = ['tokenize', 'ssplit', 'pos']
     words=[]
     if text!='':
-        if not sent_split:
-            if not properties:
-                properties={'tokenize_no_ssplit':True}
-                # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
-            else:
-                properties.update({'tokenize_no_ssplit':True})
-                # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
         if pre_tokenized:
             if not properties:
                 properties={'tokenize_pretokenized': True}
@@ -409,6 +401,13 @@ def POS_Tag_str_langdetect(text,
             else:
                 properties.update({'tokenize_pretokenized': True})
                 # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
+        elif sent_split==False:
+            if not properties:
+                properties={'tokenize_no_ssplit':True}
+                # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
+            else:
+                properties.update({'tokenize_no_ssplit':True})
+                # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
         ##########
         try:
             lang = langdetect.detect(text)
@@ -428,7 +427,7 @@ def POS_Tag_str_langdetect(text,
             if sent_split:
                 segmented = '\n'.join(segmented_list)
             else:
-                words = flatten(words)
+                words = [(word,pos) for sent in words for word,pos in sent]
                 segmented = ' '.join(segmented_list)
         else:
             segmented = text
@@ -536,20 +535,20 @@ def POS_Tag(text_list,
     '''
     if type(text_list)==type(''):
         text_list = [text_list]
-    if not sent_split:
+    if pre_tokenized:
+        if not properties:
+            properties={'tokenize_pretokenized': True}
+            # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
+        else:
+            properties.update({'tokenize_pretokenized': True})
+            # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
+    elif sent_split==False:
         if not properties:
             properties={'tokenize_no_ssplit':True}
             # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
         else:
             properties.update({'tokenize_no_ssplit':True})
             # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
-    if pre_tokenized:
-            if not properties:
-                properties={'tokenize_pretokenized': True}
-                # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
-            else:
-                properties.update({'tokenize_pretokenized': True})
-                # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
     if (lang == "zh-cn"):
         properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
     annotators = ['tokenize', 'ssplit', 'pos']
@@ -584,7 +583,7 @@ def POS_Tag(text_list,
                 if sent_split:
                     segmented = '\n'.join(segmented_list)
                 else:
-                    words = flatten(words)
+                    words = [(word,pos) for sent in words for word,pos in sent]
                     segmented = ' '.join(segmented_list)
             else:
                 segmented = text
@@ -829,13 +828,6 @@ def Dependency_Parse_str_langdetect(text,
         nsubj(发出,国务院), nmod:tmod(发出,日前), dobj(发出,通知), punct(发出,，), conj(发出,要求), punct(发出,。), amod(通知,紧急), dobj(要求,地), ccomp(要求,落实), det(地,各), advmod(落实,切实), ccomp(落实,保证), dobj(保证,政策), punct(保证,，), conj(保证,维护), compound:nn(供应,市场), case(供应,的), mark:clf(各,项), det(政策,各), nmod:assmod(政策,供应), dobj(维护,稳定), compound:nn(稳定,副食品), compound:nn(稳定,价格)
     '''
     annotators=['tokenize', 'ssplit', 'lemma', 'pos', 'depparse']
-    if not sent_split:
-        if not properties:
-            properties={'tokenize_no_ssplit':True}
-            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
-        else:
-            properties.update({'tokenize_no_ssplit':True})
-            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
     if pre_tokenized:
         if not properties:
             properties={'tokenize_pretokenized': True}
@@ -843,6 +835,13 @@ def Dependency_Parse_str_langdetect(text,
         else:
             properties.update({'tokenize_pretokenized': True})
             # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
+    elif sent_split==False:
+        if not properties:
+            properties={'tokenize_no_ssplit':True}
+            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
+        else:
+            properties.update({'tokenize_no_ssplit':True})
+            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
     if text!='':
         if use_str_langdetect:
             try:
@@ -1097,13 +1096,6 @@ def Dependency_Parse(text_list,
     '''
     if type(text_list)==type(''):
         text_list = [text_list]
-    if not sent_split:
-        if not properties:
-            properties={'tokenize_no_ssplit':True}
-            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
-        else:
-            properties.update({'tokenize_no_ssplit':True})
-            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
     if pre_tokenized:
         if not properties:
             properties={'tokenize_pretokenized': True}
@@ -1111,6 +1103,13 @@ def Dependency_Parse(text_list,
         else:
             properties.update({'tokenize_pretokenized': True})
             # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
+    elif sent_split==False:
+        if not properties:
+            properties={'tokenize_no_ssplit':True}
+            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
+        else:
+            properties.update({'tokenize_no_ssplit':True})
+            # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
     if lang == "zh-cn":
         properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
     annotators=['tokenize', 'ssplit', 'lemma', 'pos', 'depparse']
