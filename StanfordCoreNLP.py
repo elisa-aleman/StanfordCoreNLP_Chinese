@@ -99,26 +99,16 @@ def get_StanfordCoreNLP_chinese_properties(properties=None):
     :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
 
     :return: Properties enabling Chinese language parsing, in addition to any in parameters.
+
+    For example:
+        properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
+        with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
+            ann = client.annotate(text)
     '''
     StanfordCoreNLP_chinese_properties = {'annotators':('tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse', 'coref'),'tokenize.language':'zh','segment.model':'edu/stanford/nlp/models/segmenter/chinese/ctb.gz','segment.sighanCorporaDict':'edu/stanford/nlp/models/segmenter/chinese','segment.serDictionary':'edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz','segment.sighanPostProcessing':True,'ssplit.boundaryTokenRegex':'[.。]|[!?！？]+','pos.model':'edu/stanford/nlp/models/pos-tagger/chinese-distsim.tagger','ner.language':'chinese','ner.model':'edu/stanford/nlp/models/ner/chinese.misc.distsim.crf.ser.gz','ner.applyNumericClassifiers':True,'ner.useSUTime':False,'ner.fine.regexner.mapping':'edu/stanford/nlp/models/kbp/chinese/gazetteers/cn_regexner_mapping.tab','ner.fine.regexner.noDefaultOverwriteLabels':'CITY,COUNTRY,STATE_OR_PROVINCE','parse.model':'edu/stanford/nlp/models/srparser/chineseSR.ser.gz','depparse.model   ':'edu/stanford/nlp/models/parser/nndep/UD_Chinese.gz','depparse.language':'chinese','coref.sieves':'ChineseHeadMatch, ExactStringMatch, PreciseConstructs, StrictHeadMatch1, StrictHeadMatch2, StrictHeadMatch3, StrictHeadMatch4, PronounMatch','coref.input.type':'raw','coref.postprocessing':True,'coref.calculateFeatureImportance':False,'coref.useConstituencyTree':True,'coref.useSemantics':False,'coref.algorithm':'hybrid','coref.path.word2vec':'','coref.language':'zh','coref.defaultPronounAgreement':True,'coref.zh.dict':'edu/stanford/nlp/models/dcoref/zh-attributes.txt.gz','coref.print.md.log':False,'coref.md.type':'RULE','coref.md.liberalChineseMD':False,'kbp.semgrex':'edu/stanford/nlp/models/kbp/chinese/semgrex','kbp.tokensregex':'edu/stanford/nlp/models/kbp/chinese/tokensregex','kbp.language':'zh','kbp.model':None,'entitylink.wikidict':'edu/stanford/nlp/models/kbp/chinese/wikidict_chinese.tsv.gz'}
     if properties:
         StanfordCoreNLP_chinese_properties.update(properties)
     return StanfordCoreNLP_chinese_properties
-
-
-#### For convenience:
-def Chinese_CoreNLPClient(text, annotators=None, properties=None, timeout=15000, be_quiet=False):
-    properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
-    with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
-        ann = client.annotate(text)
-    return ann
-
-
-#### For convenience:
-def English_CoreNLPClient(text, annotators=None, properties=None, timeout=15000, be_quiet=False):
-    with CoreNLPClient(annotators=annotators, properties=properties, timeout=timeout) as client:
-        ann = client.annotate(text)
-    return ann
 
 ############################################################################################
 ############################################################################################
@@ -141,17 +131,15 @@ def flatten(container):
 ##### Segmentation #######
 ##########################
 
-def Segment(text, 
-            sent_split=True, 
-            tolist=True, 
-            properties=None, 
-            timeout=15000,
-            be_quiet=False, 
-            chinese_only=False,
-            use_langdetect=True,
-            no_langdetect_chinese=False):
+def Segment_str_langdetect(text, 
+                        sent_split=True, 
+                        tolist=True, 
+                        properties=None, 
+                        timeout=15000,
+                        be_quiet=False,
+                        chinese_only=False):
     '''
-    Processes a Chinese or English string and returns list of words nested in lists of sentences, or text split by spaces and newlines depending on parameters.
+    Processes a string, detects if it is Chinese or English, and returns list of words nested in lists of sentences, or text split by spaces and newlines depending on parameters.
     
     :param (str | unicode) text: raw text for the CoreNLPServer to parse
     :param (bool) sent_split: Set True to split text into sentences. Set False to keep the text as one sentence.
@@ -161,22 +149,20 @@ def Segment(text,
     :param (bool) be_quiet: CoreNLPClient silent mode
     :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese. 
                                 Ignoring English can save overhead, when faster tools are available.
-    :param (bool) use_langdetect: Use langdetect to select English and Chinese only. Set to false to just assume text is OK to parse
-    :param (bool) no_langdetect_chinese: When not using langdetect, you need to specify if Chinese text is being used with True. 
 
     :return: segmented text in nested list or string
 
     Example:
 
     en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
-    Segment(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+    Segment_str_langdetect(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
     >>>[['This', 'is', 'a', 'test', 'sentence', 'for', 'the', 'server', 'to', 'handle', '.'], ['I', 'wonder', 'what', 'it', 'will', 'do', '.']]
 
     zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
-    Segment(zh_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+    Segment_str_langdetect(zh_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
     >>>[['国务院', '日前', '发出', '紧急', '通知', '，', '要求', '各', '地', '切实', '落实', '保证', '市场', '供应', '的', '各', '项', '政策', '，', '维护', '副食品', '价格', '稳定', '。']]
     
-    Segment(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
+    Segment_str_langdetect(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
     >>>'国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。'
     
     '''
@@ -191,19 +177,14 @@ def Segment(text,
                 properties.update({'tokenize_no_ssplit':True})
                 # Assume the sentences are split by two continuous newlines (\n\n). Only run tokenization and disable sentence segmentation.
         ##########
-        if use_langdetect:
-            try:
-                lang = langdetect.detect(text)
-            except langdetect.lang_detect_exception.LangDetectException:
-                lang = "undetermined"
-            if chinese_only:
-                parse_ok = (lang == "zh-cn")
-            else:
-                parse_ok = (lang == "zh-cn") or (lang == "en")
+        try:
+            lang = langdetect.detect(text)
+        except langdetect.lang_detect_exception.LangDetectException:
+            lang = "undetermined"
+        if chinese_only:
+            parse_ok = (lang == "zh-cn")
         else:
-            parse_ok = True
-            if no_langdetect_chinese:
-                lang = 'zh-cn'
+            parse_ok = (lang == "zh-cn") or (lang == "en")
         if parse_ok:
             if (lang == "zh-cn"):
                 properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
@@ -226,7 +207,7 @@ def Segment(text,
     else:
         return segmented #string
 
-def Segment_many(text_list, 
+def Segment(text_list, 
             sent_split=True, 
             tolist=True, 
             properties=None, 
@@ -254,14 +235,14 @@ def Segment_many(text_list,
     Example:
 
     en_texts = ['This is a test sentence for the server to handle. I wonder what it will do.']
-    Segment_many(en_texts, sent_split=True, tolist=True, properties=None, timeout=15000, lang='en')
+    Segment(en_texts, sent_split=True, tolist=True, properties=None, timeout=15000, lang='en')
     >>>[[['This', 'is', 'a', 'test', 'sentence', 'for', 'the', 'server', 'to', 'handle', '.'], ['I', 'wonder', 'what', 'it', 'will', 'do', '.']]]
 
     zh_texts = ["国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"]
-    Segment_many(zh_texts, sent_split=True, tolist=True, properties=None, timeout=15000, lang='zh-cn')
+    Segment(zh_texts, sent_split=True, tolist=True, properties=None, timeout=15000, lang='zh-cn')
     >>>[[['国务院', '日前', '发出', '紧急', '通知', '，', '要求', '各', '地', '切实', '落实', '保证', '市场', '供应', '的', '各', '项', '政策', '，', '维护', '副食品', '价格', '稳定', '。']]]
     
-    Segment_many(zh_texts, sent_split=True, tolist=False, properties=None, timeout=15000, lang='zh-cn')
+    Segment(zh_texts, sent_split=True, tolist=False, properties=None, timeout=15000, lang='zh-cn')
     >>>[['国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。']]
     
     '''
@@ -323,18 +304,16 @@ def Segment_many(text_list,
 ##### POS Tagging #######
 #########################
 
-def POS_Tag(text,
-            sent_split=True,
-            tolist=True,
-            pre_tokenized=True,
-            properties=None,
-            timeout=15000,
-            be_quiet=False,
-            chinese_only=False,
-            use_langdetect=True,
-            no_langdetect_chinese=False):
+def POS_Tag_str_langdetect(text,
+                        sent_split=True,
+                        tolist=True,
+                        pre_tokenized=True,
+                        properties=None,
+                        timeout=15000,
+                        be_quiet=False,
+                        chinese_only=False):
     '''
-    Processes a Chinese or English string and returns a list of words paired in tuples with their tags, nested in lists of sentences;
+    Processes a string, detects if it is Chinese or English, and returns a list of words paired in tuples with their tags, nested in lists of sentences;
     or text split by spaces and newlines depending on parameters, tagged delimited by #.
     
     :param (str | unicode) text: raw text for the CoreNLPServer to parse
@@ -345,8 +324,6 @@ def POS_Tag(text,
     :param (int) timeout: CoreNLP server time before raising exception.
     :param (bool) be_quiet: CoreNLPClient silent mode
     :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese.
-    :param (bool) use_langdetect: Use langdetect to select English and Chinese only. Set to false to just assume text is OK to parse
-    :param (bool) no_langdetect_chinese: When not using langdetect, you need to specify if Chinese text is being used with True. 
     
     POS Tags explanation
 
@@ -405,14 +382,14 @@ def POS_Tag(text,
     Example:
 
     en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
-    POS_Tag(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+    POS_Tag_str_langdetect(en_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
     >>>[[('This', 'DT'), ('is', 'VBZ'), ('a', 'DT'), ('test', 'NN'), ('sentence', 'NN'), ('for', 'IN'), ('the', 'DT'), ('server', 'NN'), ('to', 'TO'), ('handle', 'VB'), ('.', '.')], [('I', 'PRP'), ('wonder', 'VBP'), ('what', 'WP'), ('it', 'PRP'), ('will', 'MD'), ('do', 'VB'), ('.', '.')]]
 
     zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
-    POS_Tag(zh_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+    POS_Tag_str_langdetect(zh_text, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
     >>>[[('国务院', 'NN'), ('日前', 'NT'), ('发出', 'VV'), ('紧急', 'JJ'), ('通知', 'NN'), ('，', 'PU'), ('要求', 'VV'), ('各', 'DT'), ('地', 'NN'), ('切实', 'AD'), ('落实', 'VV'), ('保证', 'VV'), ('市场', 'NN'), ('供应', 'NN'), ('的', 'DEG'), ('各', 'DT'), ('项', 'M'), ('政策', 'NN'), ('，', 'PU'), ('维护', 'VV'), ('副食品', 'NN'), ('价格', 'NN'), ('稳定', 'NN'), ('。', 'PU')]]
     
-    POS_Tag(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
+    POS_Tag_str_langdetect(zh_text, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
     >>>'国务院#NN 日前#NT 发出#VV 紧急#JJ 通知#NN ，#PU 要求#VV 各#DT 地#NN 切实#AD 落实#VV 保证#VV 市场#NN 供应#NN 的#DEG 各#DT 项#M 政策#NN ，#PU 维护#VV 副食品#NN 价格#NN 稳定#NN 。#PU'
 
     '''
@@ -434,19 +411,14 @@ def POS_Tag(text,
                 properties.update({'tokenize_pretokenized': True})
                 # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
         ##########
-        if use_langdetect:
-            try:
-                lang = langdetect.detect(text)
-            except langdetect.lang_detect_exception.LangDetectException:
-                lang = "undetermined"
-            if chinese_only:
-                parse_ok = (lang == "zh-cn")
-            else:
-                parse_ok = (lang == "zh-cn") or (lang == "en")
+        try:
+            lang = langdetect.detect(text)
+        except langdetect.lang_detect_exception.LangDetectException:
+            lang = "undetermined"
+        if chinese_only:
+            parse_ok = (lang == "zh-cn")
         else:
-            parse_ok = True
-            if no_langdetect_chinese:
-                lang = 'zh-cn'
+            parse_ok = (lang == "zh-cn") or (lang == "en")
         if parse_ok:
             if (lang == "zh-cn"):
                 properties = get_StanfordCoreNLP_chinese_properties(properties=properties)
@@ -469,7 +441,7 @@ def POS_Tag(text,
     else:
         return segmented #string
 
-def POS_Tag_many(text_list, 
+def POS_Tag(text_list, 
             sent_split=True, 
             tolist=True, 
             properties=None, 
@@ -551,14 +523,14 @@ def POS_Tag_many(text_list,
     Example:
 
     en_texts = ['This is a test sentence for the server to handle. I wonder what it will do.']
-    POS_Tag_many(en_texts, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+    POS_Tag(en_texts, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
     >>>[[[('This', 'DT'), ('is', 'VBZ'), ('a', 'DT'), ('test', 'NN'), ('sentence', 'NN'), ('for', 'IN'), ('the', 'DT'), ('server', 'NN'), ('to', 'TO'), ('handle', 'VB'), ('.', '.')], [('I', 'PRP'), ('wonder', 'VBP'), ('what', 'WP'), ('it', 'PRP'), ('will', 'MD'), ('do', 'VB'), ('.', '.')]]]
 
     zh_texts = ["国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"]
-    POS_Tag_many(zh_texts, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
+    POS_Tag(zh_texts, sent_split=True, tolist=True, properties=None, timeout=15000, chinese_only=False)
     >>>[[[('国务院', 'NN'), ('日前', 'NT'), ('发出', 'VV'), ('紧急', 'JJ'), ('通知', 'NN'), ('，', 'PU'), ('要求', 'VV'), ('各', 'DT'), ('地', 'NN'), ('切实', 'AD'), ('落实', 'VV'), ('保证', 'VV'), ('市场', 'NN'), ('供应', 'NN'), ('的', 'DEG'), ('各', 'DT'), ('项', 'M'), ('政策', 'NN'), ('，', 'PU'), ('维护', 'VV'), ('副食品', 'NN'), ('价格', 'NN'), ('稳定', 'NN'), ('。', 'PU')]]]
     
-    POS_Tag_many(zh_texts, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
+    POS_Tag(zh_texts, sent_split=True, tolist=False, properties=None, timeout=15000, chinese_only=False)
     >>>['国务院#NN 日前#NT 发出#VV 紧急#JJ 通知#NN ，#PU 要求#VV 各#DT 地#NN 切实#AD 落实#VV 保证#VV 市场#NN 供应#NN 的#DEG 各#DT 项#M 政策#NN ，#PU 维护#VV 副食品#NN 价格#NN 稳定#NN 。#PU']
     
     '''
@@ -671,20 +643,18 @@ Each edge is a connection between the words. Let's look at the edge between 5 an
 ##########################
 
 
-def Dependency_Parse(text,
-                    dependency_type='basicDependencies',
-                    sent_split=False,
-                    tolist=True,
-                    output_with_sentence=True,
-                    pre_tokenized=True,
-                    properties=None,
-                    timeout=15000,
-                    be_quiet=False,
-                    chinese_only=False,
-                    use_langdetect=True,
-                    no_langdetect_chinese=False):
+def Dependency_Parse_str_langdetect(text,
+                                dependency_type='basicDependencies',
+                                sent_split=False,
+                                tolist=True,
+                                output_with_sentence=True,
+                                pre_tokenized=True,
+                                properties=None,
+                                timeout=15000,
+                                be_quiet=False,
+                                chinese_only=False):
     '''
-    Processes a Chinese or English text and collects the dependency, source word and target word in a list of tuples nested in a list of sentences.
+    Processes a string, detects if it is Chinese or English, and collects the dependency, source word and target word in a list of tuples nested in a list of sentences.
     
     :param (str | unicode) text: raw text for the CoreNLPServer to parse
     :param (str) dependency_type: Choose from the options Stanford NLP has available. Default basicDependencies.
@@ -702,9 +672,7 @@ def Dependency_Parse(text,
     :param (int) timeout: CoreNLP server time before raising exception.
     :param (bool) be_quiet: CoreNLPClient silent mode
     :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese.
-    :param (bool) use_langdetect: Use langdetect to select English and Chinese only. Set to false to just assume text is OK to parse
-    :param (bool) no_langdetect_chinese: When not using langdetect, you need to specify if Chinese text is being used with True. 
-
+    
     Stanford NLP published a manual for understanding the dependencies and what they mean.
     Stanford NLP dependencies manual:
     https://nlp.stanford.edu/software/dependencies_manual.pdf
@@ -790,7 +758,7 @@ def Dependency_Parse(text,
     Example:
 
     en_text = 'This is a test sentence for the server to handle. I wonder what it will do.'
-    Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+    Dependency_Parse_str_langdetect(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
     >>> [   (['This','is','a','test','sentence','for','the','server','to','handle','.'],
                 [('nsubj', 'sentence', 'This'),
                 ('cop', 'sentence', 'is'),
@@ -814,7 +782,7 @@ def Dependency_Parse(text,
             )
         ]
 
-    print(Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+    print(Dependency_Parse_str_langdetect(en_text, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
     >>>
     This is a test sentence for the server to handle .
     nsubj(sentence,This), cop(sentence,is), det(sentence,a), compound(sentence,test), acl(sentence,handle), punct(sentence,.), det(server,the), mark(handle,for), nsubj(handle,server), mark(handle,to)
@@ -823,7 +791,7 @@ def Dependency_Parse(text,
     obj(do,what), nsubj(do,it), aux(do,will), ccomp(wonder,do), punct(wonder,.), nsubj(wonder,I)
 
     zh_text = "国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"
-    Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+    Dependency_Parse_str_langdetect(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
     >>>[(  ['国务院','日前','发出','紧急','通知','，','要求','各','地','切实','落实','保证','市场','供应','的','各','项','政策','，','维护','副食品','价格','稳定','。'],
               [('nsubj', '发出', '国务院'),
                ('nmod:tmod', '发出', '日前'),
@@ -850,7 +818,7 @@ def Dependency_Parse(text,
                ('compound:nn', '稳定', '价格')]
         )]
 
-    print(Dependency_Parse(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+    print(Dependency_Parse_str_langdetect(zh_text, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
     >>> 
     国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。
     nsubj(发出,国务院), nmod:tmod(发出,日前), dobj(发出,通知), punct(发出,，), conj(发出,要求), punct(发出,。), amod(通知,紧急), dobj(要求,地), ccomp(要求,落实), det(地,各), advmod(落实,切实), ccomp(落实,保证), dobj(保证,政策), punct(保证,，), conj(保证,维护), compound:nn(供应,市场), case(供应,的), mark:clf(各,项), det(政策,各), nmod:assmod(政策,供应), dobj(维护,稳定), compound:nn(稳定,副食品), compound:nn(稳定,价格)
@@ -872,7 +840,7 @@ def Dependency_Parse(text,
             properties.update({'tokenize_pretokenized': True})
             # Assume the text is tokenized by white space and sentence split by newline. Do not run a model.
     if text!='':
-        if use_langdetect:
+        if use_str_langdetect:
             try:
                 lang = langdetect.detect(text)
             except langdetect.lang_detect_exception.LangDetectException:
@@ -883,7 +851,7 @@ def Dependency_Parse(text,
                 parse_ok = (lang == "zh-cn") or (lang == "en")
         else:
             parse_ok = True
-            if no_langdetect_chinese:
+            if no_str_langdetect_chinese:
                 lang = 'zh-cn'
         if parse_ok:
             if (lang == "zh-cn"):
@@ -935,7 +903,7 @@ def Dependency_Parse(text,
     else:
         return deps_str
 
-def Dependency_Parse_many(text_list,
+def Dependency_Parse(text_list,
                     dependency_type='basicDependencies',
                     sent_split=False,
                     tolist=True,
@@ -946,7 +914,7 @@ def Dependency_Parse_many(text_list,
                     verbose=1,
                     lang='zh-cn'):
     '''
-    Processes a Chinese or English text and collects the dependency, source word and target word in a list of tuples nested in a list of sentences.
+    Processes a list of Chinese or English texts and collects the dependency, source word and target word in a list of tuples nested in a list of sentences, in a list of documents.
     
     :param (list[str] | tuple[str] | str) text_list: list of strings of raw text for the CoreNLPServer to parse
     :param (str) dependency_type: Choose from the options Stanford NLP has available. Default basicDependencies.
@@ -1059,7 +1027,7 @@ def Dependency_Parse_many(text_list,
     Example:
 
     en_texts = ['This is a test sentence for the server to handle. I wonder what it will do.']
-    Dependency_Parse_many(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+    Dependency_Parse(en_text, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
     >>> [[   (['This','is','a','test','sentence','for','the','server','to','handle','.'],
                 [('nsubj', 'sentence', 'This'),
                 ('cop', 'sentence', 'is'),
@@ -1083,7 +1051,7 @@ def Dependency_Parse_many(text_list,
             )
         ]]
 
-    Dependency_Parse_many(en_texts, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+    Dependency_Parse(en_texts, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
     >>>["This is a test sentence for the server to handle .
     nsubj(sentence,This), cop(sentence,is), det(sentence,a), compound(sentence,test), acl(sentence,handle), punct(sentence,.), det(server,the), mark(handle,for), nsubj(handle,server), mark(handle,to)
 
@@ -1091,7 +1059,7 @@ def Dependency_Parse_many(text_list,
     obj(do,what), nsubj(do,it), aux(do,will), ccomp(wonder,do), punct(wonder,.), nsubj(wonder,I)"]
 
     zh_texts = ["国务院日前发出紧急通知，要求各地切实落实保证市场供应的各项政策，维护副食品价格稳定。"]
-    Dependency_Parse_many(zh_texts, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
+    Dependency_Parse(zh_texts, dependency_type='basicDependencies', sent_split=True, tolist=True, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False)
     >>>[[(  ['国务院','日前','发出','紧急','通知','，','要求','各','地','切实','落实','保证','市场','供应','的','各','项','政策','，','维护','副食品','价格','稳定','。'],
               [('nsubj', '发出', '国务院'),
                ('nmod:tmod', '发出', '日前'),
@@ -1118,7 +1086,7 @@ def Dependency_Parse_many(text_list,
                ('compound:nn', '稳定', '价格')]
         )]]
 
-    Dependency_Parse_many(zh_texts, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
+    Dependency_Parse(zh_texts, dependency_type='basicDependencies', sent_split=True, tolist=False, output_with_sentence=True, pre_tokenized=False, properties=None, timeout=15000, chinese_only=False))
     >>> 
     ["国务院 日前 发出 紧急 通知 ， 要求 各 地 切实 落实 保证 市场 供应 的 各 项 政策 ， 维护 副食品 价格 稳定 。
     nsubj(发出,国务院), nmod:tmod(发出,日前), dobj(发出,通知), punct(发出,，), conj(发出,要求), punct(发出,。), amod(通知,紧急), dobj(要求,地), ccomp(要求,落实), det(地,各), advmod(落实,切实), ccomp(落实,保证), dobj(保证,政策), punct(保证,，), conj(保证,维护), compound:nn(供应,市场), case(供应,的), mark:clf(各,项), det(政策,各), nmod:assmod(政策,供应), dobj(维护,稳定), compound:nn(稳定,副食品), compound:nn(稳定,价格)"]
