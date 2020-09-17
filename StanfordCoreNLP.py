@@ -326,44 +326,7 @@ def POS_Tag_str_langdetect(text,
         The Chinese tags used by Stanford NLP are the same as Penn Treebank POS Tags
 
         Penn Treebank POS tags: 
-        https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
-
-        1.  CC    Coordinating conjunction
-        2.  CD    Cardinal number
-        3.  DT    Determiner
-        4.  EX    Existential there
-        5.  FW    Foreign word
-        6.  IN    Preposition or subordinating conjunction
-        7.  JJ    Adjective
-        8.  JJR   Adjective, comparative
-        9.  JJS   Adjective, superlative
-        10. LS    List item marker
-        11. MD    Modal
-        12. NN    Noun, singular or mass
-        13. NNS   Noun, plural
-        14. NNP   Proper noun, singular
-        15. NNPS  Proper noun, plural
-        16. PDT   Predeterminer
-        17. POS   Possessive ending
-        18. PRP   Personal pronoun
-        19. PRP$  Possessive pronoun
-        20. RB    Adverb
-        21. RBR   Adverb, comparative
-        22. RBS   Adverb, superlative
-        23. RP    Particle
-        24. SYM   Symbol
-        25. TO    to
-        26. UH    Interjection
-        27. VB    Verb, base form
-        28. VBD   Verb, past tense
-        29. VBG   Verb, gerund or present participle
-        30. VBN   Verb, past participle
-        31. VBP   Verb, non-3rd person singular present
-        32. VBZ   Verb, 3rd person singular present
-        33. WDT   Wh-determiner
-        34. WP    Wh-pronoun
-        35. WP$   Possessive wh-pronoun
-        36. WRB   Wh-adverb
+        http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html
 
         :return: segmented pairs of (word, tag) nested in sentences
             [   [(token, pos_tag), (token, pos_tag)],
@@ -467,44 +430,7 @@ def POS_Tag(text_list,
         The Chinese tags used by Stanford NLP are the same as Penn Treebank POS Tags
 
         Penn Treebank POS tags: 
-        https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
-
-        1.  CC    Coordinating conjunction
-        2.  CD    Cardinal number
-        3.  DT    Determiner
-        4.  EX    Existential there
-        5.  FW    Foreign word
-        6.  IN    Preposition or subordinating conjunction
-        7.  JJ    Adjective
-        8.  JJR   Adjective, comparative
-        9.  JJS   Adjective, superlative
-        10. LS    List item marker
-        11. MD    Modal
-        12. NN    Noun, singular or mass
-        13. NNS   Noun, plural
-        14. NNP   Proper noun, singular
-        15. NNPS  Proper noun, plural
-        16. PDT   Predeterminer
-        17. POS   Possessive ending
-        18. PRP   Personal pronoun
-        19. PRP$  Possessive pronoun
-        20. RB    Adverb
-        21. RBR   Adverb, comparative
-        22. RBS   Adverb, superlative
-        23. RP    Particle
-        24. SYM   Symbol
-        25. TO    to
-        26. UH    Interjection
-        27. VB    Verb, base form
-        28. VBD   Verb, past tense
-        29. VBG   Verb, gerund or present participle
-        30. VBN   Verb, past participle
-        31. VBP   Verb, non-3rd person singular present
-        32. VBZ   Verb, 3rd person singular present
-        33. WDT   Wh-determiner
-        34. WP    Wh-pronoun
-        35. WP$   Possessive wh-pronoun
-        36. WRB   Wh-adverb
+        http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html
 
         :return: segmented pairs of (word, tag) nested in sentences, nested in documents (determined at input)
             [[   [(token, pos_tag), (token, pos_tag)],
@@ -674,59 +600,8 @@ def Dependency_Parse_str_langdetect(text,
         :param (bool) be_quiet: CoreNLPClient silent mode
         :param (bool) chinese_only: set to True to ignore English and other languages. Set to False to process English and Chinese.
         
-        Stanford NLP published a manual for understanding the dependencies and what they mean.
         Stanford NLP dependencies manual:
         https://nlp.stanford.edu/software/dependencies_manual.pdf
-
-        acomp: adjectival complement
-        advcl: adverbial clause modifier
-        advmod: adverb modifier
-        agent: agent
-        amod: adjectival modifier
-        appos: appositional modifier
-        aux: auxiliary
-        auxpass: passive auxiliary
-        cc: coordination
-        ccomp: clausal complement
-        conj: conjunct
-        cop: copula
-        csubj: clausal subject
-        csubjpass: clausal passive subject
-        dep: dependent
-        det: determiner
-        discourse: discourse element
-        dobj: direct object
-        expl: expletive
-        goeswith: goes with
-        iobj: indirect object
-        mark: marker
-        mwe: multi-word expression
-        neg: negation modifier
-        nn: noun compound modifier
-        npadvmod: noun phrase as adverbial modifier
-        nsubj: nominal subject
-        nsubjpass: passive nominal subject
-        num: numeric modifier
-        number: element of compound number
-        parataxis: parataxis
-        pcomp: prepositional complement
-        pobj: object of a preposition
-        poss: possession modifier
-        possessive: possessive modifier
-        preconj: preconjunct
-        predet: predeterminer
-        prep: prepositional modifier
-        prepc: prepositional clausal modifier
-        prt: phrasal verb particle
-        punct: punctuation
-        quantmod: quantifier phrase modifier
-        rcmod: relative clause modifier
-        ref: referent
-        root: root
-        tmod: temporal modifier
-        vmod: reduced non-finite verbal modifier
-        xcomp: open clausal complement
-        xsubj: controlling subject
 
         :return: Tuple of sentence, and dependency list nested in a list of sentences
                 if output_with_sentence==True:
@@ -937,59 +812,8 @@ def Dependency_Parse(text_list,
                 3: CoreNLPClient silent mode off, progress printing
         :param (str) lang: 'zh-cn' for Chinese and 'en' for English
 
-        Stanford NLP published a manual for understanding the dependencies and what they mean.
         Stanford NLP dependencies manual:
         https://nlp.stanford.edu/software/dependencies_manual.pdf
-
-        acomp: adjectival complement
-        advcl: adverbial clause modifier
-        advmod: adverb modifier
-        agent: agent
-        amod: adjectival modifier
-        appos: appositional modifier
-        aux: auxiliary
-        auxpass: passive auxiliary
-        cc: coordination
-        ccomp: clausal complement
-        conj: conjunct
-        cop: copula
-        csubj: clausal subject
-        csubjpass: clausal passive subject
-        dep: dependent
-        det: determiner
-        discourse: discourse element
-        dobj: direct object
-        expl: expletive
-        goeswith: goes with
-        iobj: indirect object
-        mark: marker
-        mwe: multi-word expression
-        neg: negation modifier
-        nn: noun compound modifier
-        npadvmod: noun phrase as adverbial modifier
-        nsubj: nominal subject
-        nsubjpass: passive nominal subject
-        num: numeric modifier
-        number: element of compound number
-        parataxis: parataxis
-        pcomp: prepositional complement
-        pobj: object of a preposition
-        poss: possession modifier
-        possessive: possessive modifier
-        preconj: preconjunct
-        predet: predeterminer
-        prep: prepositional modifier
-        prepc: prepositional clausal modifier
-        prt: phrasal verb particle
-        punct: punctuation
-        quantmod: quantifier phrase modifier
-        rcmod: relative clause modifier
-        ref: referent
-        root: root
-        tmod: temporal modifier
-        vmod: reduced non-finite verbal modifier
-        xcomp: open clausal complement
-        xsubj: controlling subject
 
         :return: List per document of: Tuple of sentence, and dependency list nested in a list of sentences
                 if output_with_sentence==True:
