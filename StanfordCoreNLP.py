@@ -308,7 +308,7 @@ def POS_Tag_str_langdetect(text,
         
         :param (str | unicode) text: raw text for the CoreNLPServer to parse
         :param (bool) sent_split: Set True to split text into sentences. Set False to keep the text as one sentence.
-        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
+        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces and sentences by newlines.
         :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
         :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
         :param (int) timeout: CoreNLP server time before raising exception.
@@ -445,7 +445,7 @@ def POS_Tag(text_list,
         
         :param (list[str] | tuple[str] | str) text_list: list of strings of raw text for the CoreNLPServer to parse
         :param (bool) sent_split: Set True to split text into sentences. Set False to keep the text as one sentence.
-        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
+        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces and sentences by newlines.
         :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
         :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
         :param (int) timeout: CoreNLP server time before raising exception.
@@ -660,7 +660,7 @@ def Dependency_Parse_str_langdetect(text,
                 'enhancedDependencies'
                 'enhancedPlusPlusDependencies'
         :param (bool) sent_split: Set True to split text into sentences. Set False to keep the text as one sentence.
-        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
+        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces and sentences by newlines.
         :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
         :param (bool) output_with_sentence: set to True (default) to get the segmented sentence as part of the output on top of the dependencies. Set to False to keep dependencies only.
         :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
@@ -919,7 +919,7 @@ def Dependency_Parse(text_list,
                 'enhancedDependencies'
                 'enhancedPlusPlusDependencies'
         :param (bool) sent_split: Set True to split text into sentences. Set False to keep the text as one sentence.
-        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces.
+        :param (bool) pre_tokenized: Avoids loading the tokenizer if true. Assumes previously split words by spaces and sentences by newlines.
         :param (bool) tolist: set to True (default) for a list of words nested in a list of sentences. Set False for a sentences split by newlines and words split by spaces.
         :param (bool) output_with_sentence: set to True (default) to get the segmented sentence as part of the output on top of the dependencies. Set to False to keep dependencies only.
         :param (dict) properties: additional request properties (written on top of Chinese ones exported here)
