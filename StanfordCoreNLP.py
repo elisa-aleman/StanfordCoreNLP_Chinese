@@ -326,7 +326,7 @@ def POS_Tag_str_langdetect(text,
         The Chinese tags used by Stanford NLP are the same as Penn Treebank POS Tags
 
         Penn Treebank POS tags: 
-        http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html
+        https://repository.upenn.edu/cgi/viewcontent.cgi?article=1039&context=ircs_reports
 
         :return: segmented pairs of (word, tag) nested in sentences
             [   [(token, pos_tag), (token, pos_tag)],
@@ -429,8 +429,8 @@ def POS_Tag(text_list,
 
         The Chinese tags used by Stanford NLP are the same as Penn Treebank POS Tags
 
-        Penn Treebank POS tags: 
-        http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html
+        Penn Treebank POS tags:
+        https://repository.upenn.edu/cgi/viewcontent.cgi?article=1039&context=ircs_reports
 
         :return: segmented pairs of (word, tag) nested in sentences, nested in documents (determined at input)
             [[   [(token, pos_tag), (token, pos_tag)],
