@@ -13,7 +13,7 @@ from stanza.server import CoreNLPClient
     https://stanfordnlp.github.io/CoreNLP/other-languages.html#python
 
     Penn Treebank POS tags: 
-    https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+    https://repository.upenn.edu/cgi/viewcontent.cgi?article=1039&context=ircs_reports
 
     Stanza basic usage of CoreNLP client:
     https://stanfordnlp.github.io/stanza/client_usage.html
